@@ -1,10 +1,12 @@
+import { Link } from "react-router-dom";
+
 import illustrationImg from "../assets/images/illustration.svg";
 import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
 
 import "../style/auth.scss";
 
-function NewRoon() {
+function NewRoom() {
   return (
     <div id="page_auth">
       <aside>
@@ -24,8 +26,7 @@ function NewRoon() {
             <Button type="submit">Criar sala</Button>
           </form>
           <p>
-            Quer entrar em uma sala existente?{" "}
-            <a href="htps://google.com">clique aqui</a>
+            Quer entrar em uma sala existente? <Link to="/">clique aqui</Link>
           </p>
         </div>
       </main>
@@ -33,4 +34,4 @@ function NewRoon() {
   );
 }
 
-export default NewRoon;
+export default NewRoom;
