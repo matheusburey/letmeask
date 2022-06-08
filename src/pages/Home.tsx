@@ -1,10 +1,13 @@
-import illustrationImg from "../../assets/images/illustration.svg";
-import logoImg from "../../assets/images/logo.svg";
-import googleIconImg from "../../assets/images/google-icon.svg";
+import googleIconImg from "../assets/images/google-icon.svg";
+import illustrationImg from "../assets/images/illustration.svg";
+import logoImg from "../assets/images/logo.svg";
+import Button from "../components/Button";
+
+import "../style/auth.scss";
 
 function Home() {
   return (
-    <div>
+    <div id="page_auth">
       <aside>
         <img
           src={illustrationImg}
@@ -16,14 +19,14 @@ function Home() {
       <main>
         <div>
           <img src={logoImg} alt="Letmeask" />
-          <button>
+          <button className="create_room" type="button">
             <img src={googleIconImg} alt="Logo do Google" />
             Crie sua sala com o Google
           </button>
           <div className="separator">ou entre em uma sala</div>
           <form>
             <input type="text" placeholder="Digite o código da sala" />
-            <button>Entrar na sala</button>
+            <Button type="submit">Entrar na sala</Button>
           </form>
         </div>
       </main>
