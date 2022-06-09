@@ -4,11 +4,20 @@ import googleIconImg from "../assets/images/google-icon.svg";
 import illustrationImg from "../assets/images/illustration.svg";
 import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
+import { AuthUse } from "../providers/Auth";
 
 import "../style/auth.scss";
 
 function Home() {
   const navigate = useNavigate();
+  const { authUser, signInWithGoogle } = AuthUse();
+
+  const handleCreateRoom = () => {
+    if (!authUser) {
+      signInWithGoogle();
+    }
+    navigate("/rooms/new");
+  };
   return (
     <div id="page_auth">
       <aside>
@@ -23,7 +32,7 @@ function Home() {
         <div>
           <img src={logoImg} alt="Letmeask" />
           <button
-            onClick={() => navigate("/rooms/new")}
+            onClick={handleCreateRoom}
             className="create_room"
             type="button"
           >
