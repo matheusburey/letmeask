@@ -48,7 +48,8 @@ export function AuthProvider({ children }: IChildrenProps) {
   };
 
   useEffect(() => {
-    auth.onAuthStateChanged(setStateuser);
+    const unsubscribe = auth.onAuthStateChanged(setStateuser);
+    return () => unsubscribe();
   });
 
   const signInWithGoogle = async () => {
