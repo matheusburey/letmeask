@@ -4,11 +4,14 @@ import "../style/button.scss";
 
 interface IButtonProps {
   children: ReactNode;
-  type: "submit" | "button";
 }
 
-function Button({ children, type }: IButtonProps) {
-  return <button className="button" type={type}>{children}</button>;
+function Button({ children }: IButtonProps) {
+  return (
+    <button className="button" type="submit">
+      {children}
+    </button>
+  );
 }
 
 export default Button;
