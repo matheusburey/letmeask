@@ -11,7 +11,7 @@ import {
 import { auth } from "../../services/firebase";
 
 interface IAuthContext {
-  authUser: IUser | undefined;
+  user: IUser | undefined;
   signInWithGoogle: () => Promise<void>;
 }
 
@@ -30,7 +30,7 @@ const AuthContext = createContext({} as IAuthContext);
 export const AuthUse = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: IChildrenProps) {
-  const [authUser, setAuthUser] = useState<IUser>();
+  const [user, setUser] = useState<IUser>();
 
   const setStateuser = (user: User | null) => {
     if (user) {
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: IChildrenProps) {
         throw new Error("erro");
       }
 
-      setAuthUser({
+      setUser({
         id: uid,
         name: displayName,
         avatar: photoURL,
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: IChildrenProps) {
     setStateuser(user);
   };
 
-  const value = useMemo(() => ({ authUser, signInWithGoogle }), [authUser]);
+  const value = useMemo(() => ({ user, signInWithGoogle }), [user]);
 
   return (
     <AuthContext.Provider value={value}> {children} </AuthContext.Provider>
