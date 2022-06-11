@@ -64,7 +64,7 @@ function Room() {
   useEffect(() => {
     onValue(ref(database, `rooms/${id}`), (room) => {
       const roomValue = room.val();
-      if (roomValue.questionsMap) {
+      if (roomValue.questions) {
         const questionsMap = Object.entries(
           roomValue.questions as IFirebaseQuestions
         ).map(([key, values]) => {
