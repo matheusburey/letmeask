@@ -80,9 +80,9 @@ function Room() {
             )?.[0],
           };
         });
-        setTitle(roomValue.title);
         setQuestions(questionsMap);
       }
+      setTitle(roomValue.title);
     });
 
     return () => {
