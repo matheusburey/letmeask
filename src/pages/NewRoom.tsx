@@ -1,4 +1,4 @@
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onValue, push, ref, set } from "firebase/database";
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -24,11 +24,10 @@ function NewRoom() {
       title: nameRoom,
       authorId: user?.id,
     });
-    onChildAdded(ref(database, "rooms"), (data) => {
-      const room = data.val();
-      if (room.authorId === user?.id && room.title === nameRoom) {
-        navigate(`/rooms/${data.key}`);
-      }
+    onValue(ref(database, "rooms"), (data) => {
+      const room = Object.keys(data.val());
+      const roomId = room[room.length - 1];
+      navigate(`/rooms/${roomId}`);
     });
   };
 
