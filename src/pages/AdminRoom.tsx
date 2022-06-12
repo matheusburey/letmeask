@@ -42,21 +42,24 @@ function AdminRoom() {
   useEffect(() => {
     onValue(ref(database, `rooms/${id}`), (room) => {
       const roomValue = room.val();
-      const questionsMap = Object.entries(
-        roomValue.questions as IFirebaseQuestions
-      ).map(([key, values]) => {
-        return {
-          id: key,
-          content: values.content,
-          author: values.author,
-          isHighlighted: values.isHighlighted,
-          isAnswered: values.isAnswered,
-        };
-      });
+      if (roomValue.questions) {
+        const questionsMap = Object.entries(
+          roomValue.questions as IFirebaseQuestions
+        ).map(([key, values]) => {
+          return {
+            id: key,
+            content: values.content,
+            author: values.author,
+            isHighlighted: values.isHighlighted,
+            isAnswered: values.isAnswered,
+          };
+        });
+        setQuestions(questionsMap);
+      }
       setTitle(roomValue.title);
-      setQuestions(questionsMap);
     });
   }, []);
+
   const handleEndRoom = (questionId = "") => {
     if (
       window.confirm("voce realmente deseja encerar esta sala") &&

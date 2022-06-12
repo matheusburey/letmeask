@@ -27,7 +27,7 @@ function NewRoom() {
     onValue(ref(database, "rooms"), (data) => {
       const room = Object.keys(data.val());
       const roomId = room[room.length - 1];
-      navigate(`/rooms/${roomId}`);
+      navigate(`/admin/rooms/${roomId}`);
     });
   };
 
