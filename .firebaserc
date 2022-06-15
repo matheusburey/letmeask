@@ -1,6 +1,7 @@
 {
   "projects": {
-    "doubt": "cruel-doubt"
+    "doubt": "cruel-doubt",
+    "default": "cruel-doubt"
   },
   "targets": {}
 }
