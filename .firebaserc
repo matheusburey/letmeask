@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "letmask-hb"
-  }
+    "doubt": "cruel-doubt"
+  },
+  "targets": {}
 }
