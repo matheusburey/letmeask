@@ -9,30 +9,14 @@ import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
 import Question from "../components/Question";
 import RoomCode from "../components/RoomCode";
+import { RoomUse } from "../providers/Room";
 import { database } from "../services/firebase";
 
 import "../style/room.scss";
 
-interface IFirebaseQuestions {
-  [key: string]: IQuestions;
-}
-
-interface IQuestions {
-  id?: string;
-  content: string;
-  author: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  isHighlighted: string;
-  isAnswered: string;
-}
-
 function AdminRoom() {
   const { id } = useParams();
-  const [questions, setQuestions] = useState<IQuestions[]>([]);
-  const [title, setTitle] = useState("");
+  const { title, questions, getRoom } = RoomUse();
   const navigate = useNavigate();
 
   if (!id) {
@@ -40,25 +24,8 @@ function AdminRoom() {
   }
 
   useEffect(() => {
-    onValue(ref(database, `rooms/${id}`), (room) => {
-      const roomValue = room.val();
-      if (roomValue.questions) {
-        const questionsMap = Object.entries(
-          roomValue.questions as IFirebaseQuestions
-        ).map(([key, values]) => {
-          return {
-            id: key,
-            content: values.content,
-            author: values.author,
-            isHighlighted: values.isHighlighted,
-            isAnswered: values.isAnswered,
-          };
-        });
-        setQuestions(questionsMap);
-      }
-      setTitle(roomValue.title);
-    });
-  }, []);
+    getRoom(id);
+  }, [id]);
 
   const handleEndRoom = (questionId = "") => {
     if (
@@ -111,9 +78,9 @@ function AdminRoom() {
       <main>
         <div className="room_title">
           <h1>Sala {title}</h1>
-          <span>{questions.length} perguntas</span>
+          <span>{questions?.length} perguntas</span>
         </div>
-        {questions.map(({ id, isHighlighted, isAnswered, author, content }) => {
+        {questions?.map(({ id, isHighlighted, isAnswered, author, content }) => {
           return (
             <Question
               key={id}
