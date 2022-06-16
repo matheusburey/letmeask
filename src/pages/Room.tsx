@@ -1,4 +1,4 @@
-import { off, onValue, push, ref, remove, set } from "firebase/database";
+import { push, ref, remove, set } from "firebase/database";
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -7,44 +7,24 @@ import Button from "../components/Button";
 import Question from "../components/Question";
 import RoomCode from "../components/RoomCode";
 import { AuthUse } from "../providers/Auth";
+import { RoomUse } from "../providers/Room";
 import { database } from "../services/firebase";
 
 import "../style/room.scss";
 
-interface IFirebaseQuestions {
-  [key: string]: IQuestions & {
-    likes: {
-      [key: string]: {
-        authorId: string;
-      };
-    };
-  };
-}
-
-interface IQuestions {
-  id?: string;
-  content: string;
-  author: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  isHighlighted: string;
-  isAnswered: string;
-  likeCount?: number;
-  likeId?: string | undefined;
-}
-
 function Room() {
   const { id } = useParams();
-  const [newQuestion, setNewQuestion] = useState("");
   const { user } = AuthUse();
-  const [questions, setQuestions] = useState<IQuestions[]>([]);
-  const [title, setTitle] = useState("");
+  const { questions, title, getRoom } = RoomUse();
+  const [newQuestion, setNewQuestion] = useState("");
 
   if (!id) {
     throw new Error("id");
   }
+
+  useEffect(() => {
+    getRoom(id, user?.id);
+  }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
     if (!likeId) {
@@ -60,35 +40,6 @@ function Room() {
       );
     }
   };
-
-  useEffect(() => {
-    onValue(ref(database, `rooms/${id}`), (room) => {
-      const roomValue = room.val();
-      if (roomValue.questions) {
-        const questionsMap = Object.entries(
-          roomValue.questions as IFirebaseQuestions
-        ).map(([key, values]) => {
-          return {
-            id: key,
-            content: values.content,
-            author: values.author,
-            isHighlighted: values.isHighlighted,
-            isAnswered: values.isAnswered,
-            likeCount: Object.values(values.likes ?? {}).length,
-            likeId: Object.entries(values.likes ?? {}).find(
-              ([, like]) => like.authorId === user?.id
-            )?.[0],
-          };
-        });
-        setQuestions(questionsMap);
-      }
-      setTitle(roomValue.title);
-    });
-
-    return () => {
-      off(ref(database));
-    };
-  }, []);
 
   const handleSubmitNewQuestion = async (event: FormEvent) => {
     event.preventDefault();
@@ -121,7 +72,7 @@ function Room() {
       <main>
         <div className="room_title">
           <h1>Sala {title}</h1>
-          <span>{questions.length} perguntas</span>
+          <span>{questions?.length} perguntas</span>
         </div>
 
         <form onSubmit={handleSubmitNewQuestion}>
@@ -145,7 +96,7 @@ function Room() {
             <Button>Enviar pergunta</Button>
           </div>
         </form>
-        {questions.map(
+        {questions?.map(
           ({
             id,
             author,
