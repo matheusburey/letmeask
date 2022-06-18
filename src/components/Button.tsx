@@ -1,30 +1,43 @@
+import { Button as ButtonChakra, ButtonProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-import "../style/button.scss";
+// import "../style/button.scss";
 
-interface IButtonProps {
+interface IButtonProps extends ButtonProps {
   children: ReactNode;
   typeButton?: boolean;
   isOutlined?: boolean;
-  callback?: () => void;
+  fun?: () => void;
+  color?: string;
 }
 
-function Button({ children, typeButton, isOutlined, callback }: IButtonProps) {
+function Button({
+  children,
+  typeButton,
+  isOutlined,
+  fun,
+  color,
+}: IButtonProps) {
   return (
-    <button
-      className={`button ${isOutlined ? "outlined" : " "}`}
+    <ButtonChakra
+      colorScheme={color}
+      variant={isOutlined ? "outline" : "solid"}
       type={typeButton ? "button" : "submit"}
-      onClick={callback}
+      size="lg"
+      w="100%"
+      fontWeight="normal"
+      onClick={fun}
     >
       {children}
-    </button>
+    </ButtonChakra>
   );
 }
 
 Button.defaultProps = {
   typeButton: false,
   isOutlined: false,
-  callback: undefined,
+  fun: undefined,
+  color: "purple",
 };
 
 export default Button;
