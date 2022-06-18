@@ -7,7 +7,6 @@ import App from "./App";
 import Providers from "./providers";
 
 import "./services/firebase";
-import "./style/global.scss";
 import theme from "./style/theme";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
