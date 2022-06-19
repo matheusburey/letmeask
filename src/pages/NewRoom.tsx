@@ -1,4 +1,12 @@
 import { onValue, push, ref, set } from "firebase/database";
+import {
+  Image,
+  Flex,
+  Stack,
+  Text,
+  Input,
+  Button as ChakraButton,
+} from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -7,8 +15,6 @@ import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
 import { AuthUse } from "../providers/Auth";
 import { database } from "../services/firebase";
-
-import "../style/auth.scss";
 
 function NewRoom() {
   const { user } = AuthUse();
@@ -32,21 +38,45 @@ function NewRoom() {
   };
 
   return (
-    <div id="page_auth">
-      <aside>
-        <img
+    <Flex h="100vh">
+      <Stack
+        as="aside"
+        flex="7"
+        px="80px"
+        justify="center"
+        bg="purple.500"
+        color="white"
+      >
+        <Image
+          maxW="320px"
           src={illustrationImg}
           alt="Ilustração simbolizando perguntas e respostas"
         />
-        <strong>Crie salas de Q&amp;A ao-vivo</strong>
-        <p>Tire as dúvidas da sua audiência em tempo-real</p>
-      </aside>
-      <main>
-        <div>
-          <img src={logoImg} alt="Letmeask" />
-          <h2>Criar uma nova sala</h2>
+        <Text fontFamily="poppins" fontWeight="bold" fontSize="4xl">
+          Crie salas de Q&amp;A ao-vivo
+        </Text>
+        <Text fontSize="2xl">
+          Tire as dúvidas da sua audiência em tempo-real
+        </Text>
+      </Stack>
+      <Stack as="main" flex="8" px="32px" align="center" justify="center">
+        <Stack maxW="320px">
+          <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
+          <Text
+            fontFamily="poppins"
+            fontWeight="bold"
+            as="h2"
+            align="center"
+            fontSize="2xl"
+          >
+            Criar uma nova sala
+          </Text>
           <form onSubmit={handleCreateRoom}>
-            <input
+            <Input
+              bg="white"
+              my="4"
+              size="lg"
+              mb="4"
               value={nameRoom}
               onChange={(event) => setnameRoom(event.target.value)}
               type="text"
@@ -54,12 +84,22 @@ function NewRoom() {
             />
             <Button>Criar sala</Button>
           </form>
-          <p>
-            Quer entrar em uma sala existente? <Link to="/">clique aqui</Link>
-          </p>
-        </div>
-      </main>
-    </div>
+          <Text fontSize="sm" align="center" pt="2" color="gray">
+            Quer entrar em uma sala existente?
+            <Link to="/">
+              <ChakraButton
+                ml="1"
+                color="pink.400"
+                fontWeight="400"
+                variant="link"
+              >
+                clique aqui
+              </ChakraButton>
+            </Link>
+          </Text>
+        </Stack>
+      </Stack>
+    </Flex>
   );
 }
 
