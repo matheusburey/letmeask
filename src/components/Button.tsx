@@ -1,33 +1,18 @@
 import { Button as ButtonChakra, ButtonProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-// import "../style/button.scss";
-
 interface IButtonProps extends ButtonProps {
   children: ReactNode;
-  typeButton?: boolean;
-  isOutlined?: boolean;
   fun?: () => void;
-  color?: string;
 }
 
 function Button({
   children,
-  typeButton,
-  isOutlined,
   fun,
-  color,
+  ...rest
 }: IButtonProps) {
   return (
-    <ButtonChakra
-      colorScheme={color}
-      variant={isOutlined ? "outline" : "solid"}
-      type={typeButton ? "button" : "submit"}
-      size="lg"
-      w="100%"
-      fontWeight="normal"
-      onClick={fun}
-    >
+    <ButtonChakra {...rest} onClick={fun}>
       {children}
     </ButtonChakra>
   );
@@ -37,7 +22,10 @@ Button.defaultProps = {
   typeButton: false,
   isOutlined: false,
   fun: undefined,
-  color: "purple",
+  colorScheme: "purple",
+  w: "100%",
+  fontWeight: "normal",
+  size: "lg",
 };
 
 export default Button;
