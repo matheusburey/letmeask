@@ -54,7 +54,7 @@ function Home() {
       <Stack as="main" flex="8" px="32px" align="center" justify="center">
         <Stack maxW="320px">
           <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
-          <Button color="red" fun={handleCreateRoom}>
+          <Button colorScheme="red" fun={handleCreateRoom}>
             <Image mr="2" src={googleIconImg} alt="Logo do Google" />
             Crie sua sala com o Google
           </Button>
