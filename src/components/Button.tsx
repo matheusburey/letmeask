@@ -1,31 +1,24 @@
+/* eslint-disable react/default-props-match-prop-types */
 import { Button as ButtonChakra, ButtonProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 interface IButtonProps extends ButtonProps {
   children: ReactNode;
-  fun?: () => void;
 }
 
-function Button({
-  children,
-  fun,
-  ...rest
-}: IButtonProps) {
+function Button({ children, ...rest }: IButtonProps) {
   return (
-    <ButtonChakra {...rest} onClick={fun}>
-      {children}
-    </ButtonChakra>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <ButtonChakra {...rest}>{children}</ButtonChakra>
   );
 }
 
 Button.defaultProps = {
-  typeButton: false,
-  isOutlined: false,
-  fun: undefined,
   colorScheme: "purple",
   w: "100%",
   fontWeight: "normal",
   size: "lg",
+  type: "submit",
 };
 
 export default Button;
