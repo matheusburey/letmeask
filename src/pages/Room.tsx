@@ -105,10 +105,18 @@ function Room() {
                 <span>{user.name}</span>
               </Flex>
             ) : (
-              <span>
-                Para enviar uma pergunta{" "}
-                <button type="button">faça seu login</button>
-              </span>
+              <Text fontSize="sm" align="center" pt="2" color="gray">
+                Para enviar uma pergunta
+                <Button
+                  w="auto"
+                  ml="1"
+                  fontSize="sm"
+                  color="pink.400"
+                  variant="link"
+                >
+                  faça seu login
+                </Button>
+              </Text>
             )}
             <Button w="auto">Enviar pergunta</Button>
           </Flex>
