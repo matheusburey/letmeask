@@ -1,6 +1,7 @@
-import copyImg from "../assets/images/copy.svg";
+import { Text } from "@chakra-ui/react";
+import { FiCopy } from "react-icons/fi";
 
-import "../style/room-code.scss";
+import Button from "./Button";
 
 interface IRoomCodeProps {
   code: string;
@@ -14,12 +15,19 @@ function RoomCode({ code }: IRoomCodeProps) {
   };
 
   return (
-    <button id="room_code" type="button" onClick={copyRoomCode}>
-      <div>
-        <img src={copyImg} alt="copy code" />
-      </div>
-      <span>Sala #{code}</span>
-    </button>
+    <Button
+      pr="1px"
+      w="auto"
+      transition="filter 0.2s"
+      _hover={{ filter: "brightness(0.9)" }}
+      size="md"
+      onClick={copyRoomCode}
+      leftIcon={<FiCopy />}
+    >
+      <Text h="38px" p="10px 6px" bg="white" color="black" rounded="6">
+        Sala #{code}
+      </Text>
+    </Button>
   );
 }
 
