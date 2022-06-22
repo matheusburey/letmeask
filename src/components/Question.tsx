@@ -1,5 +1,5 @@
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import "../style/question.scss";
 
 interface IQuestionProps {
   content: string;
@@ -21,19 +21,25 @@ function Question({
   isHighlighted,
 }: IQuestionProps) {
   return (
-    <div
-      className={`question ${isAnswered ? "answered" : ""} 
-      ${isHighlighted ? "highlighted" : ""}`}
+    <Box
+      // eslint-disable-next-line no-nested-ternary
+      bg={isAnswered ? "#DBDCDD" : isHighlighted ? "#F4F0FF" : "white"}
+      border={isHighlighted && !isAnswered ? "1px solid #835AFD" : ""}
+      shadow="md"
+      rounded="md"
+      p="6"
     >
-      <p>{content}</p>
-      <footer>
-        <div className="user_info">
-          <img src={author.avatar} alt={author.name} />
-          <span>{author.name}</span>
-        </div>
-        <div>{children}</div>
-      </footer>
-    </div>
+      <Text>{content}</Text>
+      <Flex justify="space-between" align="center" mt="6">
+        <Flex align="center">
+          <Avatar name={author.name} src={author.avatar} size="sm" mr="2" />
+          <Text color="gray.600" fontSize="md">
+            {author.name}
+          </Text>
+        </Flex>
+        <Flex justify="center">{children}</Flex>
+      </Flex>
+    </Box>
   );
 }
 
