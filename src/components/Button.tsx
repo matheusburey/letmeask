@@ -1,30 +1,24 @@
+/* eslint-disable react/default-props-match-prop-types */
+import { Button as ButtonChakra, ButtonProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-import "../style/button.scss";
-
-interface IButtonProps {
+interface IButtonProps extends ButtonProps {
   children: ReactNode;
-  typeButton?: boolean;
-  isOutlined?: boolean;
-  callback?: () => void;
 }
 
-function Button({ children, typeButton, isOutlined, callback }: IButtonProps) {
+function Button({ children, ...rest }: IButtonProps) {
   return (
-    <button
-      className={`button ${isOutlined ? "outlined" : " "}`}
-      type={typeButton ? "button" : "submit"}
-      onClick={callback}
-    >
-      {children}
-    </button>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <ButtonChakra {...rest}>{children}</ButtonChakra>
   );
 }
 
 Button.defaultProps = {
-  typeButton: false,
-  isOutlined: false,
-  callback: undefined,
+  colorScheme: "purple",
+  w: "100%",
+  fontWeight: "normal",
+  size: "lg",
+  type: "submit",
 };
 
 export default Button;
