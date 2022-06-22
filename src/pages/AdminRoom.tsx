@@ -1,11 +1,19 @@
-import { Badge, Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  Image,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { ref, remove, update } from "firebase/database";
 import { useEffect } from "react";
+import { AiOutlineCheckCircle, AiOutlineDelete } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 
 import answerImg from "../assets/images/answer.svg";
-import checkImg from "../assets/images/check.svg";
-import deleteImg from "../assets/images/delete.svg";
 import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
 import Question from "../components/Question";
@@ -71,7 +79,7 @@ function AdminRoom() {
           </HStack>
         </Flex>
       </Box>
-      <Box as="main" maxW="800px" mx="auto">
+      <Box as="main" maxW="800px" mx="auto" pb="4">
         <Flex mt="8" mb="6">
           <Text as="h1" fontWeight="bold" fontSize="2xl" fontFamily="poppins">
             Sala {title}
@@ -80,41 +88,45 @@ function AdminRoom() {
             {questions?.length} perguntas
           </Badge>
         </Flex>
-        {questions?.map(
-          ({ id, isHighlighted, isAnswered, author, content }) => {
-            return (
-              <Question
-                key={id}
-                author={author}
-                isHighlighted={isHighlighted}
-                isAnswered={isAnswered}
-                content={content}
-              >
-                <button
-                  type="button"
-                  aria-label="Marcar pergunta pergunta como respondida"
-                  onClick={() => handleCheckQuestionAnswer(id)}
+        <Stack>
+          {questions?.map(
+            ({ id, isHighlighted, isAnswered, author, content }) => {
+              return (
+                <Question
+                  key={id}
+                  author={author}
+                  isHighlighted={isHighlighted}
+                  isAnswered={isAnswered}
+                  content={content}
                 >
-                  <img src={checkImg} alt="Remover pergunta" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Dar pergunta destaque a pergunta"
-                  onClick={() => handleHighlightQuestion(id)}
-                >
-                  <img src={answerImg} alt="Remover pergunta" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Remover pergunta"
-                  onClick={() => handleDeleteQuestion(id)}
-                >
-                  <img src={deleteImg} alt="Remover pergunta" />
-                </button>
-              </Question>
-            );
-          }
-        )}
+                  <IconButton
+                    color="gray"
+                    variant="glost"
+                    aria-label="Marcar pergunta pergunta como respondida"
+                    fontSize="24px"
+                    onClick={() => handleCheckQuestionAnswer(id)}
+                    icon={<AiOutlineCheckCircle />}
+                  />
+                  <button
+                    type="button"
+                    aria-label="Dar pergunta destaque a pergunta"
+                    onClick={() => handleHighlightQuestion(id)}
+                  >
+                    <img src={answerImg} alt="Remover pergunta" />
+                  </button>
+                  <IconButton
+                    color="gray"
+                    variant="glost"
+                    aria-label="Remover pergunta"
+                    fontSize="24px"
+                    onClick={() => handleDeleteQuestion(id)}
+                    icon={<AiOutlineDelete />}
+                  />
+                </Question>
+              );
+            }
+          )}
+        </Stack>
       </Box>
     </>
   );
