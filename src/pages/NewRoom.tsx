@@ -1,12 +1,5 @@
+import { Image, Flex, Stack, Text, Input } from "@chakra-ui/react";
 import { onValue, push, ref, set } from "firebase/database";
-import {
-  Image,
-  Flex,
-  Stack,
-  Text,
-  Input,
-  Button as ChakraButton,
-} from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -87,14 +80,15 @@ function NewRoom() {
           <Text fontSize="sm" align="center" pt="2" color="gray">
             Quer entrar em uma sala existente?
             <Link to="/">
-              <ChakraButton
+              <Button
+                w="auto"
                 ml="1"
+                fontSize="sm"
                 color="pink.400"
-                fontWeight="400"
                 variant="link"
               >
                 clique aqui
-              </ChakraButton>
+              </Button>
             </Link>
           </Text>
         </Stack>
