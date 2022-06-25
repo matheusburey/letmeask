@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
 import Button from "../components/Button";
+import Header from "../components/Header";
 import Question from "../components/Question";
 import RoomCode from "../components/RoomCode";
 import { AuthUse } from "../providers/Auth";
@@ -72,12 +73,7 @@ function Room() {
 
   return (
     <>
-      <Box as="header" p="6" borderBottom="#e2e8f0 solid 1px">
-        <Flex maxW="1120px" mx="auto" align="center" justify="space-between">
-          <Image maxH="45px" src={logoImg} alt="Letmeask" />
-          <RoomCode code={id} />
-        </Flex>
-      </Box>
+      <Header id={id} />
       <Box as="main" maxW="800px" mx="auto" pb="4">
         <Flex mt="8" mb="6">
           <Text as="h1" fontWeight="bold" fontSize="2xl" fontFamily="poppins">
