@@ -63,7 +63,14 @@ function AdminRoom() {
           <Text as="h1" fontWeight="bold" fontSize="2xl" fontFamily="poppins">
             Sala {title}
           </Text>
-          <Badge ml="4" py="2" px="3" colorScheme="purple" borderRadius="full">
+          <Badge
+            h="9"
+            ml="4"
+            py="2"
+            px="3"
+            colorScheme="purple"
+            borderRadius="full"
+          >
             {questions?.length} perguntas
           </Badge>
         </Flex>
