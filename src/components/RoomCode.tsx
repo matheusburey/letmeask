@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import { FiCopy } from "react-icons/fi";
 
 import Button from "./Button";
@@ -24,9 +24,18 @@ function RoomCode({ code }: IRoomCodeProps) {
       onClick={copyRoomCode}
       leftIcon={<FiCopy />}
     >
-      <Text h="38px" p="10px 6px" bg="white" color="black" rounded="6">
+      <Heading
+        noOfLines={1}
+        w={["100px", "auto", "auto"]}
+        h="38px"
+        size="xs"
+        p="10px 6px"
+        bg="white"
+        color="black"
+        rounded="6"
+      >
         Sala #{code}
-      </Text>
+      </Heading>
     </Button>
   );
 }

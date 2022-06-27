@@ -58,7 +58,7 @@ function AdminRoom() {
   return (
     <>
       <Header id={id} fun={handleEndRoom} />
-      <Box as="main" maxW="800px" mx="auto" pb="4">
+      <Box as="main" maxW="800px" mx="auto" p="4">
         <Flex mt="8" mb="6">
           <Text as="h1" fontWeight="bold" fontSize="2xl" fontFamily="poppins">
             Sala {title}

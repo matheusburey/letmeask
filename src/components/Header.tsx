@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Image } from "@chakra-ui/react";
+import { Box, Stack, Image } from "@chakra-ui/react";
 
 import logoImg from "../assets/images/logo.svg";
 import Button from "./Button";
@@ -12,17 +12,24 @@ interface IHeaderProps {
 function Header({ id, fun }: IHeaderProps) {
   return (
     <Box as="header" p="6" borderBottom="#e2e8f0 solid 1px">
-      <Flex maxW="1120px" mx="auto" align="center" justify="space-between">
+      <Stack
+        maxW="1120px"
+        direction={["column", "row", "row"]}
+        mx="auto"
+        align="center"
+        justify="space-between"
+        spacing="4"
+      >
         <Image maxH="45px" src={logoImg} alt="Letmeask" />
-        <HStack spacing="4">
+        <Stack direction={["row", "column", "column"]} spacing="4">
           <RoomCode code={id} />
           {fun && (
             <Button variant="outline" w="auto" h="40px" onClick={fun}>
               Encerar sala
             </Button>
           )}
-        </HStack>
-      </Flex>
+        </Stack>
+      </Stack>
     </Box>
   );
 }
