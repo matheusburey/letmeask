@@ -4,8 +4,8 @@ import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import googleIconImg from "../assets/images/google-icon.svg";
-import illustrationImg from "../assets/images/illustration.svg";
 import logoImg from "../assets/images/logo.svg";
+import Aside from "../components/Aside";
 import Button from "../components/Button";
 import { AuthUse } from "../providers/Auth";
 import { database } from "../services/firebase";
@@ -38,26 +38,7 @@ function Home() {
 
   return (
     <Flex h="100vh">
-      <Stack
-        as="aside"
-        flex="7"
-        px="80px"
-        justify="center"
-        bg="purple.500"
-        color="white"
-      >
-        <Image
-          maxW="320px"
-          src={illustrationImg}
-          alt="Ilustração simbolizando perguntas e respostas"
-        />
-        <Text fontFamily="poppins" fontWeight="bold" fontSize="4xl">
-          Crie salas de Q&amp;A ao-vivo
-        </Text>
-        <Text fontSize="2xl">
-          Tire as dúvidas da sua audiência em tempo-real
-        </Text>
-      </Stack>
+      <Aside />
       <Stack as="main" flex="8" px="32px" align="center" justify="center">
         <Stack maxW="320px">
           <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
@@ -72,6 +53,7 @@ function Home() {
           </Flex>
           <form onSubmit={joinRoom}>
             <Input
+              bg="white"
               size="lg"
               mb="4"
               value={roomCode}
