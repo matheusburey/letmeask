@@ -1,6 +1,6 @@
 import { Image, Flex, Stack, Text, Input } from "@chakra-ui/react";
 import { onValue, push, ref, set } from "firebase/database";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
@@ -29,6 +29,11 @@ function NewRoom() {
       navigate(`/admin/rooms/${roomId}`);
     });
   };
+  useEffect(() => {
+    if (!user) {
+      navigate("/rooms");
+    }
+  }, [user]);
 
   return (
     <Flex h="100vh">

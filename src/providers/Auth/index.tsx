@@ -18,7 +18,7 @@ interface IAuthContext {
 interface IUser {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 }
 
 interface IChildrenProps {
@@ -35,14 +35,10 @@ export function AuthProvider({ children }: IChildrenProps) {
   const setStateuser = (user: User | null) => {
     if (user) {
       const { displayName, photoURL, uid } = user;
-      if (!displayName || !photoURL) {
-        throw new Error("erro");
-      }
-
       setUser({
         id: uid,
-        name: displayName,
-        avatar: photoURL,
+        name: displayName || "User",
+        avatar: photoURL || undefined,
       });
     }
   };
