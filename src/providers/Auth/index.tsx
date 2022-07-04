@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { auth } from "../../services/firebase";
 
@@ -18,7 +19,7 @@ interface IAuthContext {
 interface IUser {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 }
 
 interface IChildrenProps {
@@ -30,19 +31,16 @@ const AuthContext = createContext({} as IAuthContext);
 export const AuthUse = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: IChildrenProps) {
+  const navigate = useNavigate();
   const [user, setUser] = useState<IUser>();
 
   const setStateuser = (user: User | null) => {
     if (user) {
       const { displayName, photoURL, uid } = user;
-      if (!displayName || !photoURL) {
-        throw new Error("erro");
-      }
-
       setUser({
         id: uid,
-        name: displayName,
-        avatar: photoURL,
+        name: displayName || "User",
+        avatar: photoURL || undefined,
       });
     }
   };
@@ -53,10 +51,15 @@ export function AuthProvider({ children }: IChildrenProps) {
   });
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
+    if (!user) {
+      await signInWithGoogle();
 
-    const { user } = await signInWithPopup(auth, provider);
-    setStateuser(user);
+      const provider = new GoogleAuthProvider();
+
+      const { user } = await signInWithPopup(auth, provider);
+      setStateuser(user);
+    }
+    navigate("/rooms/new");
   };
 
   const value = useMemo(() => ({ user, signInWithGoogle }), [user]);

@@ -21,7 +21,7 @@ import { database } from "../services/firebase";
 
 function Room() {
   const { id } = useParams();
-  const { user } = AuthUse();
+  const { user, signInWithGoogle } = AuthUse();
   const { questions, title, getRoom } = RoomUse();
   const [newQuestion, setNewQuestion] = useState("");
 
@@ -30,7 +30,7 @@ function Room() {
   }
 
   useEffect(() => {
-    getRoom(id, user?.id);
+    return getRoom(id, user?.id);
   }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
@@ -108,12 +108,15 @@ function Room() {
                   fontSize="sm"
                   color="pink.400"
                   variant="link"
+                  onClick={signInWithGoogle}
                 >
                   faça seu login
                 </Button>
               </Text>
             )}
-            <Button w="auto">Enviar pergunta</Button>
+            <Button disabled={!newQuestion || !user} w="auto">
+              Enviar pergunta
+            </Button>
           </Flex>
         </Box>
         <Stack>
@@ -144,6 +147,7 @@ function Room() {
                     fontSize="24px"
                     p="4"
                     _hover={{ color: "#B794F4" }}
+                    disabled={!user}
                   >
                     {!!likeCount && (
                       <Text fontSize="lg" pt="2">
