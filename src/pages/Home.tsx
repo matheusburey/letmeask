@@ -1,6 +1,5 @@
 import { Image, Flex, Stack, Text, Input, Divider } from "@chakra-ui/react";
-import { get, child, ref } from "firebase/database";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import googleIconImg from "../assets/images/google-icon.svg";
@@ -8,32 +7,19 @@ import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
 import Button from "../components/Button";
 import { AuthUse } from "../providers/Auth";
-import { database } from "../services/firebase";
+import { RoomUse } from "../providers/Room";
 
 function Home() {
   const navigate = useNavigate();
   const { user, signInWithGoogle } = AuthUse();
+  const { joinRoom } = RoomUse();
   const [roomCode, setRoomCode] = useState("");
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     if (!user) {
-      signInWithGoogle();
+      await signInWithGoogle();
     }
     navigate("/rooms/new");
-  };
-
-  const joinRoom = async (event: FormEvent) => {
-    event.preventDefault();
-
-    if (!roomCode.trim()) {
-      return;
-    }
-    const room = await get(child(ref(database), `rooms/${roomCode}`));
-    if (!room.val()) {
-      console.log("sala nao existe");
-      return;
-    }
-    navigate(`rooms/${roomCode}`);
   };
 
   return (
@@ -51,18 +37,22 @@ function Home() {
             <Text fontSize="sm">ou entre em uma sala</Text>
             <Divider colorScheme="gray" w="24%" />
           </Flex>
-          <form onSubmit={joinRoom}>
-            <Input
-              bg="white"
-              size="lg"
-              mb="4"
-              value={roomCode}
-              onChange={(event) => setRoomCode(event.target.value)}
-              type="text"
-              placeholder="Digite o código da sala"
-            />
-            <Button>Entrar na sala</Button>
-          </form>
+          <Input
+            bg="white"
+            size="lg"
+            mb="4"
+            value={roomCode}
+            onChange={(event) => setRoomCode(event.target.value)}
+            type="text"
+            placeholder="Digite o código da sala"
+          />
+          <Button
+            disabled={!roomCode}
+            type="button"
+            onClick={() => joinRoom(roomCode)}
+          >
+            Entrar na sala
+          </Button>
         </Stack>
       </Stack>
     </Flex>
