@@ -1,5 +1,5 @@
 import { Image, Flex, Stack, Text, Input } from "@chakra-ui/react";
-import { onValue, push, ref, set } from "firebase/database";
+import { get, onValue, push, ref, set } from "firebase/database";
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -11,27 +11,29 @@ import { database } from "../services/firebase";
 
 function NewRoom() {
   const { user } = AuthUse();
+  const [spinner, setSpinner] = useState<any>(undefined);
   const [nameRoom, setnameRoom] = useState("");
   const navigate = useNavigate();
 
   const handleCreateRoom = async (event: FormEvent) => {
+    setSpinner(true);
     event.preventDefault();
     if (!nameRoom.trim()) {
+      setSpinner(false);
       return;
     }
     await set(push(ref(database, "rooms")), {
       title: nameRoom,
       authorId: user?.id,
     });
-    onValue(ref(database, "rooms"), (data) => {
-      const room = Object.keys(data.val());
-      const roomId = room[room.length - 1];
-      navigate(`/admin/rooms/${roomId}`);
-    });
+    const data = await get(ref(database, "rooms"));
+    const room = Object.keys(data.val());
+    const roomId = room[room.length - 1];
+    navigate(`/admin/rooms/${roomId}`);
   };
   useEffect(() => {
     if (!user) {
-      navigate("/rooms");
+      navigate("/");
     }
   }, [user]);
 
@@ -61,7 +63,7 @@ function NewRoom() {
               type="text"
               placeholder="Nome da sala"
             />
-            <Button>Criar sala</Button>
+            <Button spinner={spinner}>Criar sala</Button>
           </form>
           <Text fontSize="sm" align="center" pt="2" color="gray">
             Quer entrar em uma sala existente?

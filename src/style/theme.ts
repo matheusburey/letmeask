@@ -20,12 +20,12 @@ const theme = extendTheme({
       500: "#a8a8b3",
     },
     purple: {
-      500: "#835afd"
+      500: "#835afd",
     },
-    red : {
-      500: "#ea4335"
-    }
-  }
+    red: {
+      500: "#ea4335",
+    },
+  },
 });
 
 export default theme;
