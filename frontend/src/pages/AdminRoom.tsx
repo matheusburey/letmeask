@@ -2,9 +2,9 @@ import { Badge, Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
 import { ref, remove, update } from "firebase/database";
 import { useEffect } from "react";
 import { AiOutlineCheckCircle, AiOutlineDelete } from "react-icons/ai";
-import { useNavigate, useParams } from "react-router-dom";
+import { RiQuestionAnswerLine } from "react-icons/ri";
+import { useParams } from "react-router-dom";
 
-import answerImg from "../assets/images/answer.svg";
 import Header from "../components/Header";
 import Question from "../components/Question";
 import { RoomUse } from "../providers/Room";
@@ -13,7 +13,6 @@ import { database } from "../services/firebase";
 function AdminRoom() {
   const { id } = useParams();
   const { title, questions, getRoom } = RoomUse();
-  const navigate = useNavigate();
 
   if (!id) {
     throw new Error("id");
@@ -22,13 +21,6 @@ function AdminRoom() {
   useEffect(() => {
     getRoom(id);
   }, [id]);
-
-  const handleEndRoom = () => {
-    if (window.confirm("voce realmente deseja encerar esta sala")) {
-      remove(ref(database, `rooms/${id}`));
-      navigate("/");
-    }
-  };
 
   const handleDeleteQuestion = (questionId = "") => {
     if (
@@ -57,7 +49,7 @@ function AdminRoom() {
 
   return (
     <>
-      <Header id={id} fun={handleEndRoom} />
+      <Header id={id} admin />
       <Box as="main" maxW="800px" mx="auto" p="4">
         <Flex mt="8" mb="6">
           <Text as="h1" fontWeight="bold" fontSize="2xl" fontFamily="poppins">
@@ -93,13 +85,14 @@ function AdminRoom() {
                     onClick={() => handleCheckQuestionAnswer(id)}
                     icon={<AiOutlineCheckCircle />}
                   />
-                  <button
-                    type="button"
+                  <IconButton
+                    color="gray"
+                    variant="glost"
+                    fontSize="24px"
                     aria-label="Dar pergunta destaque a pergunta"
                     onClick={() => handleHighlightQuestion(id)}
-                  >
-                    <img src={answerImg} alt="Remover pergunta" />
-                  </button>
+                    icon={<RiQuestionAnswerLine />}
+                  />
                   <IconButton
                     color="gray"
                     variant="glost"

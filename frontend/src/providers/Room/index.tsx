@@ -1,7 +1,6 @@
 import { useToast } from "@chakra-ui/react";
-import { child, get, off, onValue, ref } from "firebase/database";
+import { get, off, onValue, push, ref, set } from "firebase/database";
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { database } from "../../services/firebase";
 
@@ -19,7 +18,8 @@ interface IAuthContext {
   title: string;
   questions: IQuestions[] | undefined;
   getRoom: (roomId: string, userId?: string) => void;
-  joinRoom: (roomCode: string) => void;
+  checkRoom: (roomId: string, userId?: string) => void;
+  newRoom: (nameRoom: string, userId: any) => void;
 }
 
 interface IQuestions {
@@ -46,7 +46,6 @@ export const RoomUse = () => useContext(RoomContext);
 
 export function RoomProvider({ children }: IChildrenProps) {
   const toast = useToast();
-  const navigate = useNavigate();
   const [questions, setQuestions] = useState<IQuestions[]>();
   const [title, setTitle] = useState("");
 
@@ -71,34 +70,6 @@ export function RoomProvider({ children }: IChildrenProps) {
     );
   };
 
-  const joinRoom = async (roomCode: string) => {
-    const roomId = roomCode.trim();
-
-    if (!roomId) {
-      return;
-    }
-    const room = await get(child(ref(database), `rooms/${roomId}`));
-
-    const { questions, title } = room.val();
-
-    if (!title) {
-      toast({
-        title: "sala nao existe.",
-        description: "We've created your account for you.",
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (questions) {
-      setQuestions(serialize(questions as IFirebaseQuestions));
-    }
-    setTitle(title);
-    navigate(`rooms/${roomCode}`);
-  };
-
   const getRoom = (roomId: string, userId = "") => {
     onValue(ref(database, `rooms/${roomId}`), (room) => {
       const { questions, title } = room.val();
@@ -109,14 +80,47 @@ export function RoomProvider({ children }: IChildrenProps) {
       }
       setTitle(title);
       setQuestions(questionsArray);
+      return () => off(ref(database));
     });
-    return () => {
-      off(ref(database));
-    };
+  };
+
+  const checkRoom = async (roomCode: string) => {
+    const roomId = roomCode.trim();
+    if (!roomId) {
+      return;
+    }
+    const room = await get(ref(database, `rooms/${roomId}`));
+
+    const roomVal = room.val();
+
+    if (!roomVal) {
+      toast({
+        title: "sala nao existe.",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      throw new Error();
+    }
+    setTitle(roomVal.title);
+  };
+
+  const newRoom = (
+    nameRoom: string,
+    userId = "yk4cpCYDZyNUIlShuDWos0a98HH3"
+  ) => {
+    set(push(ref(database, "rooms")), {
+      title: nameRoom,
+      authorId: userId,
+    });
+    return get(ref(database, "rooms")).then((data) => {
+      const room = Object.keys(data.val());
+      return room[room.length - 1];
+    });
   };
 
   const value = useMemo(
-    () => ({ title, questions, getRoom, joinRoom }),
+    () => ({ title, questions, getRoom, checkRoom, newRoom }),
     [title, questions]
   );
 
