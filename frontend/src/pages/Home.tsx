@@ -1,23 +1,46 @@
-import { Image, Flex, Stack, Text, Input, Divider } from "@chakra-ui/react";
+import {
+  Image,
+  Flex,
+  Stack,
+  Text,
+  Input,
+  Divider,
+  Button,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
-import Button from "../components/Button";
 import { AuthUse } from "../providers/Auth";
 import { RoomUse } from "../providers/Room";
 
 function Home() {
-  const { signInWithGoogle } = AuthUse();
-  const { joinRoom } = RoomUse();
+  const { user, signInWithGoogle } = AuthUse();
+  const { checkRoom } = RoomUse();
+  const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
-  const [spinner, setSpinner] = useState<any>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const clickButtonJoinRoom = () => {
-    setSpinner(true);
-    joinRoom(roomCode);
+  const clickButtonJoinRoom = async () => {
+    try {
+      setIsLoading(true);
+      await checkRoom(roomCode);
+      navigate(`rooms/${roomCode}`);
+    } catch (e) {
+      setIsLoading(false);
+      console.log(e);
+    }
   };
+
+  const newRoom = async () => {
+    if (!user) {
+      await signInWithGoogle();
+    }
+    navigate("rooms/new");
+  };
+
   return (
     <Flex h="100vh">
       <Aside />
@@ -25,11 +48,10 @@ function Home() {
         <Stack maxW="320px">
           <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
           <Button
-            type="button"
             colorScheme="gray"
             borderColor="black"
             variant="outline"
-            onClick={signInWithGoogle}
+            onClick={newRoom}
             leftIcon={<FcGoogle />}
           >
             Crie sua sala com o Google
@@ -41,17 +63,14 @@ function Home() {
           </Flex>
           <Input
             bg="white"
-            size="lg"
-            mb="4"
+            type="text"
             value={roomCode}
             onChange={(event) => setRoomCode(event.target.value)}
-            type="text"
             placeholder="Digite o código da sala"
           />
           <Button
-            spinner={spinner}
+            isLoading={isLoading}
             disabled={!roomCode}
-            type="button"
             onClick={clickButtonJoinRoom}
           >
             Entrar na sala

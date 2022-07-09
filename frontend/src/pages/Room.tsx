@@ -6,13 +6,13 @@ import {
   Stack,
   Text,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
 import { push, ref, remove, set } from "firebase/database";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 
-import Button from "../components/Button";
 import Header from "../components/Header";
 import Question from "../components/Question";
 import { AuthUse } from "../providers/Auth";
@@ -30,7 +30,7 @@ function Room() {
   }
 
   useEffect(() => {
-    return getRoom(id, user?.id);
+    getRoom(id);
   }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
@@ -48,8 +48,7 @@ function Room() {
     }
   };
 
-  const handleSubmitNewQuestion = async (event: FormEvent) => {
-    event.preventDefault();
+  const handleSubmitNewQuestion = async () => {
     if (!newQuestion.trim()) {
       return;
     }
@@ -81,44 +80,45 @@ function Room() {
           </Badge>
         </Flex>
 
-        <Box as="form" onSubmit={handleSubmitNewQuestion} mb="8">
-          <Textarea
-            variant="filled"
-            boxShadow="md"
-            resize="vertical"
-            bg="white"
-            mb="8"
-            minH="130px"
-            placeholder="Qual sua pergunta?"
-            value={newQuestion}
-            onChange={(event) => setNewQuestion(event.target.value)}
-          />
-          <Flex align="center" justify="space-between">
-            {user ? (
-              <Flex align="center">
-                <Avatar name={user.name} src={user.avatar} size="sm" mr="2" />
-                <span>{user.name}</span>
-              </Flex>
-            ) : (
-              <Text fontSize="sm" align="center" pt="2" color="gray">
-                Para enviar uma pergunta
-                <Button
-                  w="auto"
-                  ml="1"
-                  fontSize="sm"
-                  color="pink.400"
-                  variant="link"
-                  onClick={signInWithGoogle}
-                >
-                  faça seu login
-                </Button>
-              </Text>
-            )}
-            <Button disabled={!newQuestion || !user} w="auto">
-              Enviar pergunta
-            </Button>
-          </Flex>
-        </Box>
+        <Textarea
+          variant="filled"
+          boxShadow="md"
+          bg="white"
+          minH="130px"
+          placeholder="Qual sua pergunta?"
+          value={newQuestion}
+          onChange={(event) => setNewQuestion(event.target.value)}
+        />
+
+        <Flex my="8" align="center" justify="space-between">
+          {user ? (
+            <Flex align="center">
+              <Avatar name={user.name} src={user.avatar} size="sm" mr="2" />
+              <span>{user.name}</span>
+            </Flex>
+          ) : (
+            <Text fontSize="sm" align="center" pt="2" color="gray">
+              Para enviar uma pergunta
+              <Button
+                w="auto"
+                ml="1"
+                fontSize="sm"
+                color="pink.400"
+                variant="link"
+                onClick={signInWithGoogle}
+              >
+                faça seu login
+              </Button>
+            </Text>
+          )}
+          <Button
+            onClick={handleSubmitNewQuestion}
+            disabled={!newQuestion || !user}
+            w="auto"
+          >
+            Enviar pergunta
+          </Button>
+        </Flex>
         <Stack>
           {questions?.map(
             ({
@@ -139,13 +139,11 @@ function Room() {
                   content={content}
                 >
                   <Button
-                    type="button"
                     variant="ghost"
                     aria-label="Marcar como gostei"
                     onClick={() => handleLike(id, likeId)}
                     rightIcon={<AiOutlineLike />}
                     fontSize="24px"
-                    p="4"
                     _hover={{ color: "#B794F4" }}
                     disabled={!user}
                   >

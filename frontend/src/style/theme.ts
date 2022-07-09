@@ -1,5 +1,9 @@
 import { extendTheme } from "@chakra-ui/react";
 
+import Button from "./Button";
+import colors from "./colors";
+import Input from "./Input";
+
 const theme = extendTheme({
   styles: {
     global: {
@@ -10,22 +14,12 @@ const theme = extendTheme({
       },
     },
   },
-
+  components: { Button, Input },
   fonts: {
     heading: `'Open Sans', sans-serif`,
     body: `'Raleway', sans-serif`,
   },
-  colors: {
-    gray: {
-      500: "#a8a8b3",
-    },
-    purple: {
-      500: "#835afd",
-    },
-    red: {
-      500: "#ea4335",
-    },
-  },
+  colors,
 });
 
 export default theme;
