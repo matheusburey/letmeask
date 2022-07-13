@@ -4,30 +4,23 @@ import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
-import { AuthUse } from "../providers/Auth";
 import { RoomUse } from "../providers/Room";
 
 function NewRoom() {
-  const { user } = AuthUse();
   const { newRoom } = RoomUse();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nameRoom, setnameRoom] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  }, [user]);
-
   const handleCreateRoom = async () => {
-    setIsLoading(true);
-    const newRoomName = nameRoom.trim();
-    if (newRoomName && user) {
-      const roomId = await newRoom(newRoomName, user.id);
-      navigate(`/admin/rooms/${roomId}`);
+    try {
+      setIsLoading(true);
+      const newRoomName = nameRoom.trim();
+      await newRoom(newRoomName);
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
