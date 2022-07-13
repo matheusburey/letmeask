@@ -13,31 +13,29 @@ import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
-import { AuthUse } from "../providers/Auth";
 import { RoomUse } from "../providers/Room";
 
 function Home() {
-  const { user, signInWithGoogle } = AuthUse();
   const { checkRoom } = RoomUse();
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const clickButtonJoinRoom = async () => {
+    const roomId = roomCode.trim();
+    if (!roomId) {
+      return;
+    }
     try {
       setIsLoading(true);
       await checkRoom(roomCode);
-      navigate(`rooms/${roomCode}`);
     } catch (e) {
-      setIsLoading(false);
       console.log(e);
+      setIsLoading(false);
     }
   };
 
   const newRoom = async () => {
-    if (!user) {
-      await signInWithGoogle();
-    }
     navigate("rooms/new");
   };
 
