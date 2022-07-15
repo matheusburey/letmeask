@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
 
-class RoomsSchemas(BaseModel):
+class QuestionsSchemas(BaseModel):
+    room_id: str
     description: str

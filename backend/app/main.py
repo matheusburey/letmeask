@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from app.routers import routers
 from fastapi.middleware.cors import CORSMiddleware
+from app.configs.config import settings
 
-origins = ["http://localhost:3000"]
+origins = [settings.url_cors]
 
 app = FastAPI(title="cruel-doubt")
 
