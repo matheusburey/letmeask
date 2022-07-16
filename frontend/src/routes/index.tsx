@@ -1,11 +1,11 @@
 import { Route, Routes as RoutesReact } from "react-router-dom";
 
-import AdminRoom from "../pages/AdminRoom";
-import Home from "../pages/Home";
-import NewRoom from "../pages/NewRoom";
-import Room from "../pages/Room";
+import { AdminRoom } from "../pages/AdminRoom";
+import { Home } from "../pages/Home";
+import { NewRoom } from "../pages/NewRoom";
+import { Room } from "../pages/Room";
 
-function Routes() {
+export function Routes() {
   return (
     <RoutesReact>
       <Route path="/" element={<Home />} />
@@ -15,5 +15,3 @@ function Routes() {
     </RoutesReact>
   );
 }
-
-export default Routes;
