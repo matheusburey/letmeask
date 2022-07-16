@@ -8,9 +8,9 @@ import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Question from "../components/Question";
 import { RoomUse } from "../providers/Room";
-import { database } from "../services/firebase";
 
-function AdminRoom() {
+export function AdminRoom() {
+  const database = ""
   const { id } = useParams();
   const { title, questions, getRoom } = RoomUse();
 
@@ -110,5 +110,3 @@ function AdminRoom() {
     </>
   );
 }
-
-export default AdminRoom;

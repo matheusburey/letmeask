@@ -15,7 +15,7 @@ import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
 import { RoomUse } from "../providers/Room";
 
-function Home() {
+export function Home() {
   const { checkRoom } = RoomUse();
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
@@ -23,15 +23,10 @@ function Home() {
 
   const clickButtonJoinRoom = async () => {
     const roomId = roomCode.trim();
-    if (!roomId) {
-      return;
-    }
-    try {
+    if (roomId) {
       setIsLoading(true);
       await checkRoom(roomCode);
-    } catch (e) {
-      console.log(e);
-      setIsLoading(false);
+      setIsLoading(false)
     }
   };
 
@@ -78,5 +73,3 @@ function Home() {
     </Flex>
   );
 }
-
-export default Home;

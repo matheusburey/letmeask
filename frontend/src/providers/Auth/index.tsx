@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 
-import { auth } from "../../services/firebase";
 
 interface IAuthContext {
   user: IUser | undefined;
@@ -44,15 +43,15 @@ export function AuthProvider({ children }: IChildrenProps) {
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setStateuser);
-    return () => unsubscribe();
+    // const unsubscribe = auth.onAuthStateChanged(setStateuser);
+    // return () => unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
     await signInWithGoogle();
     const provider = new GoogleAuthProvider();
-    const { user } = await signInWithPopup(auth, provider);
-    setStateuser(user);
+    // const { user } = await signInWithPopup(auth, provider);
+    // setStateuser(user);
   };
 
   const value = useMemo(() => ({ user, signInWithGoogle }), [user]);

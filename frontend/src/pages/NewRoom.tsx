@@ -1,26 +1,22 @@
 import { Image, Flex, Stack, Text, Input, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
 import { RoomUse } from "../providers/Room";
 
-function NewRoom() {
-  const { newRoom } = RoomUse();
+export function NewRoom() {
+  const { createNewRoom } = RoomUse();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nameRoom, setnameRoom] = useState("");
   const navigate = useNavigate();
 
   const handleCreateRoom = async () => {
-    try {
-      setIsLoading(true);
-      const newRoomName = nameRoom.trim();
-      await newRoom(newRoomName);
-    } catch (e) {
-      console.log(e);
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    const newRoomName = nameRoom.trim();
+    await createNewRoom(newRoomName);
+    setIsLoading(false);
   };
 
   return (
@@ -67,5 +63,3 @@ function NewRoom() {
     </Flex>
   );
 }
-
-export default NewRoom;

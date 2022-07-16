@@ -1,10 +1,8 @@
 import { useToast } from "@chakra-ui/react";
-import { off, onValue, ref } from "firebase/database";
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../../service/api";
-import { database } from "../../services/firebase";
+import api from "../../services/api";
 
 interface IFirebaseQuestions {
   [key: string]: IQuestions & {
@@ -21,7 +19,8 @@ interface IAuthContext {
   questions: IQuestions[] | undefined;
   getRoom: (roomId: string, userId?: string) => void;
   checkRoom: (roomId: string) => void;
-  newRoom: (title: string) => void;
+  createNewRoom: (title: string) => void;
+  deleteRoom: (rooms: string) => void;
 }
 
 interface IQuestions {
@@ -74,54 +73,68 @@ export function RoomProvider({ children }: IChildrenProps) {
   };
 
   const getRoom = (roomId: string, userId = "") => {
-    onValue(ref(database, `rooms/${roomId}`), (room) => {
-      const { questions, title } = room.val();
-      let questionsArray: IQuestions[] = [];
-
-      if (questions) {
-        questionsArray = serialize(questions as IFirebaseQuestions, userId);
-      }
-      setTitle(title);
-      setQuestions(questionsArray);
-      return () => off(ref(database));
-    });
+    // onValue(ref(database, `rooms/${roomId}`), (room) => {
+    //   const { questions, title } = room.val();
+    //   let questionsArray: IQuestions[] = [];
+    //
+    //   if (questions) {
+    //     questionsArray = serialize(questions as IFirebaseQuestions, userId);
+    //   }
+    //   setTitle(title);
+    //   setQuestions(questionsArray);
+    //   return () => off(ref(database));
+    // });
   };
 
   const checkRoom = async (roomId: string) => {
-    const { data } = await api.get(`rooms${roomId}`);
-    if (!data) {
+    try {
+      const { data } = await api.get(`rooms/${roomId}`);
+      setTitle(data.data.title);
+      navigate(`rooms/${roomId}`);
+    } catch (e) {
       toast({
         title: "sala nao existe.",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
-      throw new Error();
     }
-    setTitle(data.detail.data.title);
   };
 
-  const newRoom = async (title: string) => {
-    const { data } = await api.post("rooms", { title });
-    if (!data) {
+  const createNewRoom = async (title: string) => {
+    try {
+      const { data } = await api.post("rooms", { title });
+      const roomId = data.data.id;
+      navigate(`rooms/${roomId}`);
+    } catch (e) {
+      console.log(e);
       toast({
-        title: "sala nao existe.",
+        title: "Erro ao criar sala",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
-      throw new Error();
     }
-    const roomId = data.detail.data._id;
-    navigate(`rooms/${roomId}`);
   };
 
-  const value = useMemo(
-    () => ({ title, questions, getRoom, checkRoom, newRoom }),
-    [title, questions]
-  );
+  const deleteRoom = (roomId: string) => {
+    try {
+      api.delete(`rooms/${roomId}`);
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Erro ao criar sala",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  }
 
   return (
-    <RoomContext.Provider value={value}> {children} </RoomContext.Provider>
+    <RoomContext.Provider value={{ title, questions, getRoom, checkRoom, createNewRoom, deleteRoom }}>
+      {children}
+    </RoomContext.Provider>
   );
 }
