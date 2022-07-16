@@ -6,12 +6,10 @@ interface ProviderProps {
   children: ReactNode;
 }
 
-function Providers({ children }: ProviderProps) {
+export function Providers({ children }: ProviderProps) {
   return (
     <AuthProvider>
       <RoomProvider>{children}</RoomProvider>
     </AuthProvider>
   );
 }
-
-export default Providers;
