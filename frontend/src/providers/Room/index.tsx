@@ -1,5 +1,5 @@
 import { useToast } from "@chakra-ui/react";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../services/api";
@@ -17,20 +17,22 @@ interface IFirebaseQuestions {
 interface IAuthContext {
   title: string;
   questions: IQuestions[] | undefined;
-  getRoom: (roomId: string, userId?: string) => void;
+  getRoom: (ws: WebSocket) => void;
   checkRoom: (roomId: string) => void;
   createNewRoom: (title: string) => void;
   deleteRoom: (rooms: string) => void;
+  sendQuestion: (ws: WebSocket, question: string) => void;
 }
 
 interface IQuestions {
   id?: string;
-  content: string;
-  author: {
+  description: string;
+  room_id: string;
+  /* author: {
     id: string;
     name: string;
     avatar: string;
-  };
+  }; */
   isHighlighted: string;
   isAnswered: string;
   likeCount?: number;
@@ -48,48 +50,30 @@ export const RoomUse = () => useContext(RoomContext);
 export function RoomProvider({ children }: IChildrenProps) {
   const toast = useToast();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<IQuestions[]>();
+  const [questions, setQuestions] = useState<IQuestions[]>([]);
   const [title, setTitle] = useState("");
 
-  const serialize = (
-    questionsData: IFirebaseQuestions,
-    userId = ""
-  ): IQuestions[] => {
-    return Object.entries(questionsData as IFirebaseQuestions).map(
-      ([key, values]) => {
-        return {
-          id: key,
-          content: values.content,
-          author: values.author,
-          isHighlighted: values.isHighlighted,
-          isAnswered: values.isAnswered,
-          likeCount: Object.values(values.likes ?? {}).length,
-          likeId: Object.entries(values.likes ?? {}).find(
-            ([, like]) => like.authorId === userId
-          )?.[0],
-        };
-      }
-    );
+  const getRoom = async (ws: WebSocket) => {
+    if (!title) {
+      const titleStorage = localStorage.getItem("roomTitle") || "";
+      setTitle(titleStorage);
+    }
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setQuestions(data);
+    };
   };
 
-  const getRoom = (roomId: string, userId = "") => {
-    // onValue(ref(database, `rooms/${roomId}`), (room) => {
-    //   const { questions, title } = room.val();
-    //   let questionsArray: IQuestions[] = [];
-    //
-    //   if (questions) {
-    //     questionsArray = serialize(questions as IFirebaseQuestions, userId);
-    //   }
-    //   setTitle(title);
-    //   setQuestions(questionsArray);
-    //   return () => off(ref(database));
-    // });
+  const sendQuestion = async (ws: WebSocket, question: string) => {
+    ws.send(question);
   };
 
   const checkRoom = async (roomId: string) => {
     try {
       const { data } = await api.get(`rooms/${roomId}`);
-      setTitle(data.data.title);
+      const roomTitle = data.data.title;
+      localStorage.setItem("roomTitle", roomTitle);
+      setTitle(roomTitle);
       navigate(`rooms/${roomId}`);
     } catch (e) {
       toast({
@@ -105,7 +89,7 @@ export function RoomProvider({ children }: IChildrenProps) {
     try {
       const { data } = await api.post("rooms", { title });
       const roomId = data.data.id;
-      navigate(`rooms/${roomId}`);
+      navigate(`/admin/rooms/${roomId}`);
     } catch (e) {
       console.log(e);
       toast({
@@ -130,11 +114,22 @@ export function RoomProvider({ children }: IChildrenProps) {
         isClosable: true,
       });
     }
-  }
+  };
+
+  const value = useMemo(
+    () => ({
+      title,
+      questions,
+      getRoom,
+      checkRoom,
+      createNewRoom,
+      deleteRoom,
+      sendQuestion,
+    }),
+    [title, questions]
+  );
 
   return (
-    <RoomContext.Provider value={{ title, questions, getRoom, checkRoom, createNewRoom, deleteRoom }}>
-      {children}
-    </RoomContext.Provider>
+    <RoomContext.Provider value={value}> {children} </RoomContext.Provider>
   );
 }

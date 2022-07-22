@@ -20,15 +20,20 @@ import { RoomUse } from "../providers/Room";
 export function Room() {
   const { id } = useParams();
   const { user, signInWithGoogle } = AuthUse();
-  const { questions, title, getRoom } = RoomUse();
+  const { questions, title, getRoom, sendQuestion } = RoomUse();
   const [newQuestion, setNewQuestion] = useState("");
+  const [conn, setConn] = useState<WebSocket>();
 
   if (!id) {
     throw new Error("id");
   }
 
   useEffect(() => {
-    getRoom(id);
+    return () => {
+      const ws = new WebSocket(`ws://localhost:8000/api/v1/questions/${id}`);
+      setConn(ws);
+      return getRoom(ws);
+    };
   }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
@@ -40,9 +45,9 @@ export function Room() {
   };
 
   const handleSubmitNewQuestion = async () => {
-    const newQuestionText = newQuestion.trim()
-    if (newQuestionText) {
-      console.log(newQuestionText);
+    const newQuestionText = newQuestion.trim();
+    if (newQuestionText && conn) {
+      sendQuestion(conn, newQuestionText);
     }
     setNewQuestion("");
   };
@@ -103,10 +108,9 @@ export function Room() {
           {questions?.map(
             ({
               id,
-              author,
               isHighlighted,
               isAnswered,
-              content,
+              description,
               likeCount,
               likeId,
             }) => {
@@ -115,8 +119,8 @@ export function Room() {
                   key={id}
                   isAnswered={isAnswered}
                   isHighlighted={isHighlighted}
-                  author={author}
-                  content={content}
+                  author={{ name: "Anonimo", avatar: "", id: `${id}1` }}
+                  content={description}
                 >
                   <Button
                     variant="ghost"

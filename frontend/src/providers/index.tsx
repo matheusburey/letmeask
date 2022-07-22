@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
+
 import { AuthProvider } from "./Auth";
 import { RoomProvider } from "./Room";
 
-interface ProviderProps {
+interface IProviderProps {
   children: ReactNode;
 }
 
-export function Providers({ children }: ProviderProps) {
+export function Providers({ children }: IProviderProps) {
   return (
     <AuthProvider>
       <RoomProvider>{children}</RoomProvider>

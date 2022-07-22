@@ -26,11 +26,11 @@ export function Home() {
     if (roomId) {
       setIsLoading(true);
       await checkRoom(roomCode);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
-  const newRoom = async () => {
+  const handleCreateRoom = async () => {
     navigate("rooms/new");
   };
 
@@ -44,7 +44,7 @@ export function Home() {
             colorScheme="gray"
             borderColor="black"
             variant="outline"
-            onClick={newRoom}
+            onClick={handleCreateRoom}
             leftIcon={<FcGoogle />}
           >
             Crie sua sala com o Google
