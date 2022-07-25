@@ -30,7 +30,7 @@ export function Room() {
 
   useEffect(() => {
     return () => {
-      const ws = new WebSocket(`ws://localhost:8000/api/v1/questions/${id}`);
+      const ws = new WebSocket(`${import.meta.env.VITE_API_WS}/${id}`);
       setConn(ws);
       return getRoom(ws);
     };

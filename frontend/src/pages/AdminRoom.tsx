@@ -1,6 +1,5 @@
 import { Badge, Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
-import { ref, remove, update } from "firebase/database";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCheckCircle, AiOutlineDelete } from "react-icons/ai";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
@@ -10,16 +9,20 @@ import Question from "../components/Question";
 import { RoomUse } from "../providers/Room";
 
 export function AdminRoom() {
-  const database = ""
   const { id } = useParams();
   const { title, questions, getRoom } = RoomUse();
+  const [conn, setConn] = useState<WebSocket>();
 
   if (!id) {
     throw new Error("id");
   }
 
   useEffect(() => {
-    getRoom(id);
+    return () => {
+      const ws = new WebSocket(`${import.meta.env.VITE_API_WS}/${id}`);
+      setConn(ws);
+      return getRoom(ws);
+    };
   }, [id]);
 
   const handleDeleteQuestion = (questionId = "") => {
@@ -27,13 +30,13 @@ export function AdminRoom() {
       window.confirm("voce realmente deseja excluir essa pergunta") &&
       questionId
     ) {
-      remove(ref(database, `rooms/${id}/questions/${questionId}`));
+      console.log(`rooms/${id}/questions/${questionId}`);
     }
   };
 
   const handleHighlightQuestion = (questionId = "") => {
     if (questionId) {
-      update(ref(database, `rooms/${id}/questions/${questionId}`), {
+      console.log(`rooms/${id}/questions/${questionId}`, {
         isHighlighted: true,
       });
     }
@@ -41,7 +44,7 @@ export function AdminRoom() {
 
   const handleCheckQuestionAnswer = (questionId = "") => {
     if (questionId) {
-      update(ref(database, `rooms/${id}/questions/${questionId}`), {
+      console.log(`rooms/${id}/questions/${questionId}`, {
         isAnswered: true,
       });
     }
@@ -67,44 +70,42 @@ export function AdminRoom() {
           </Badge>
         </Flex>
         <Stack>
-          {questions?.map(
-            ({ id, isHighlighted, isAnswered, author, content }) => {
-              return (
-                <Question
-                  key={id}
-                  author={author}
-                  isHighlighted={isHighlighted}
-                  isAnswered={isAnswered}
-                  content={content}
-                >
-                  <IconButton
-                    color="gray"
-                    variant="glost"
-                    aria-label="Marcar pergunta pergunta como respondida"
-                    fontSize="24px"
-                    onClick={() => handleCheckQuestionAnswer(id)}
-                    icon={<AiOutlineCheckCircle />}
-                  />
-                  <IconButton
-                    color="gray"
-                    variant="glost"
-                    fontSize="24px"
-                    aria-label="Dar pergunta destaque a pergunta"
-                    onClick={() => handleHighlightQuestion(id)}
-                    icon={<RiQuestionAnswerLine />}
-                  />
-                  <IconButton
-                    color="gray"
-                    variant="glost"
-                    aria-label="Remover pergunta"
-                    fontSize="24px"
-                    onClick={() => handleDeleteQuestion(id)}
-                    icon={<AiOutlineDelete />}
-                  />
-                </Question>
-              );
-            }
-          )}
+          {questions?.map(({ id, isHighlighted, isAnswered, description }) => {
+            return (
+              <Question
+                key={id}
+                author={{ name: "Anonimo", avatar: "", id: `${id}1` }}
+                isHighlighted={isHighlighted}
+                isAnswered={isAnswered}
+                content={description}
+              >
+                <IconButton
+                  color="gray"
+                  variant="glost"
+                  aria-label="Marcar pergunta pergunta como respondida"
+                  fontSize="24px"
+                  onClick={() => handleCheckQuestionAnswer(id)}
+                  icon={<AiOutlineCheckCircle />}
+                />
+                <IconButton
+                  color="gray"
+                  variant="glost"
+                  fontSize="24px"
+                  aria-label="Dar pergunta destaque a pergunta"
+                  onClick={() => handleHighlightQuestion(id)}
+                  icon={<RiQuestionAnswerLine />}
+                />
+                <IconButton
+                  color="gray"
+                  variant="glost"
+                  aria-label="Remover pergunta"
+                  fontSize="24px"
+                  onClick={() => handleDeleteQuestion(id)}
+                  icon={<AiOutlineDelete />}
+                />
+              </Question>
+            );
+          })}
         </Stack>
       </Box>
     </>

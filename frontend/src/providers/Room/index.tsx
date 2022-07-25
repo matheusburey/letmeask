@@ -36,7 +36,7 @@ interface IQuestions {
   isHighlighted: string;
   isAnswered: string;
   likeCount?: number;
-  likeId?: string | undefined;
+  likeId?: string;
 }
 
 interface IChildrenProps {
