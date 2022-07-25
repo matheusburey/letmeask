@@ -1,22 +1,38 @@
+from typing import List
+from fastapi import WebSocket
 from app.configs.database import database
 from app.models.questions import Questions
 
 
 class QuestionsCrud:
-    db = database.questions
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+        self.db = database.questions
 
-    @classmethod
-    def new_questions(cls, data: dict):
-        question = Questions(**data)
-        cls.db.insert_one(question.__dict__)
-        return cls.serialize(question.__dict__)
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
 
-    @classmethod
-    def get_questions(cls, room_id: str):
-        questions = list(cls.db.find({"room_id": room_id}))
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message, websocket: WebSocket):
+        await websocket.send_json(message)
+
+    async def broadcast(self, message):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+    def new_questions(self, description: str, room_id: str):
+        question = Questions(description, room_id)
+        self.db.insert_one(question.__dict__)
+        return self.serialize(question.__dict__)
+
+    def get_questions(self, room_id: str):
+        questions = list(self.db.find({"room_id": room_id}))
         if questions == []:
             return []
-        return cls.serialize(questions)
+        return self.serialize(questions)
 
     def delete_questions(self, id: str):
         question = self.db.find_one_and_delete({"id": id})

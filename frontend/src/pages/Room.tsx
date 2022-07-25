@@ -8,7 +8,6 @@ import {
   Textarea,
   Button,
 } from "@chakra-ui/react";
-import { push, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { useParams } from "react-router-dom";
@@ -17,53 +16,39 @@ import Header from "../components/Header";
 import Question from "../components/Question";
 import { AuthUse } from "../providers/Auth";
 import { RoomUse } from "../providers/Room";
-import { database } from "../services/firebase";
 
-function Room() {
+export function Room() {
   const { id } = useParams();
   const { user, signInWithGoogle } = AuthUse();
-  const { questions, title, getRoom } = RoomUse();
+  const { questions, title, getRoom, sendQuestion } = RoomUse();
   const [newQuestion, setNewQuestion] = useState("");
+  const [conn, setConn] = useState<WebSocket>();
 
   if (!id) {
     throw new Error("id");
   }
 
   useEffect(() => {
-    getRoom(id);
+    return () => {
+      const ws = new WebSocket(`${import.meta.env.VITE_API_WS}/${id}`);
+      setConn(ws);
+      return getRoom(ws);
+    };
   }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
     if (!likeId) {
-      await set(
-        push(ref(database, `rooms/${id}/questions/${questionId}/likes`)),
-        {
-          authorId: user?.id,
-        }
-      );
+      console.log("like");
     } else {
-      remove(
-        ref(database, `rooms/${id}/questions/${questionId}/likes/${likeId}`)
-      );
+      console.log("remove like");
     }
   };
 
   const handleSubmitNewQuestion = async () => {
-    if (!newQuestion.trim()) {
-      return;
+    const newQuestionText = newQuestion.trim();
+    if (newQuestionText && conn) {
+      sendQuestion(conn, newQuestionText);
     }
-    if (!user) {
-      throw new Error("You must be logged in ");
-    }
-
-    const question = {
-      content: newQuestion,
-      author: user,
-      isHighlighted: false,
-      isAnswered: false,
-    };
-
-    await set(push(ref(database, `rooms/${id}/questions`)), question);
     setNewQuestion("");
   };
 
@@ -113,7 +98,7 @@ function Room() {
           )}
           <Button
             onClick={handleSubmitNewQuestion}
-            disabled={!newQuestion || !user}
+            disabled={!newQuestion}
             w="auto"
           >
             Enviar pergunta
@@ -123,10 +108,9 @@ function Room() {
           {questions?.map(
             ({
               id,
-              author,
               isHighlighted,
               isAnswered,
-              content,
+              description,
               likeCount,
               likeId,
             }) => {
@@ -135,8 +119,8 @@ function Room() {
                   key={id}
                   isAnswered={isAnswered}
                   isHighlighted={isHighlighted}
-                  author={author}
-                  content={content}
+                  author={{ name: "Anonimo", avatar: "", id: `${id}1` }}
+                  content={description}
                 >
                   <Button
                     variant="ghost"
@@ -162,5 +146,3 @@ function Room() {
     </>
   );
 }
-
-export default Room;

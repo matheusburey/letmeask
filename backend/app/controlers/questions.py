@@ -1,36 +1,18 @@
-from fastapi import HTTPException
-from app.schemas.questions import QuestionsSchemas
+from fastapi import WebSocket, WebSocketDisconnect
 from app.crud.questions import QuestionsCrud
 
+manager = QuestionsCrud()
 
-async def create_new_question(data: QuestionsSchemas):
+
+async def ws(websocket: WebSocket, room_id: str):
+    await manager.connect(websocket)
+    all_questions = manager.get_questions(room_id)
+    await manager.send_personal_message(all_questions, websocket)
     try:
-        question = QuestionsCrud().new_questions(data.__dict__)
-        return {"status": "ok", "data": question}
-    except Exception as e:
-        print(e)
-        return {"detail": {"status": "error", "description": "server error"}}
-
-
-async def get_all_questions(room_id: str):
-    try:
-        questions = QuestionsCrud().get_questions(room_id)
-        return {"status": "ok", "data": questions}
-    except Exception as e:
-        print(e)
-        return {"detail": {"status": "error", "description": "server error"}}
-
-
-async def delete_questions(room_id: str):
-    try:
-        questions = QuestionsCrud().delete_questions(room_id)
-        if questions:
-            return {"status": "ok", "data": questions}
-    except Exception as e:
-        print(e)
-        return {"detail": {"status": "error", "description": "server error"}}
-    description = "room not found"
-    raise HTTPException(
-        status_code=404,
-        detail={"detail": {"status": "error", "description": description}},
-    )
+        while True:
+            description = await websocket.receive_text()
+            manager.new_questions(description, room_id)
+            data = manager.get_questions(room_id)
+            await manager.broadcast(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)

@@ -15,7 +15,7 @@ import logoImg from "../assets/images/logo.svg";
 import Aside from "../components/Aside";
 import { RoomUse } from "../providers/Room";
 
-function Home() {
+export function Home() {
   const { checkRoom } = RoomUse();
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
@@ -23,19 +23,14 @@ function Home() {
 
   const clickButtonJoinRoom = async () => {
     const roomId = roomCode.trim();
-    if (!roomId) {
-      return;
-    }
-    try {
+    if (roomId) {
       setIsLoading(true);
       await checkRoom(roomCode);
-    } catch (e) {
-      console.log(e);
       setIsLoading(false);
     }
   };
 
-  const newRoom = async () => {
+  const handleCreateRoom = async () => {
     navigate("rooms/new");
   };
 
@@ -49,7 +44,7 @@ function Home() {
             colorScheme="gray"
             borderColor="black"
             variant="outline"
-            onClick={newRoom}
+            onClick={handleCreateRoom}
             leftIcon={<FcGoogle />}
           >
             Crie sua sala com o Google
@@ -78,5 +73,3 @@ function Home() {
     </Flex>
   );
 }
-
-export default Home;

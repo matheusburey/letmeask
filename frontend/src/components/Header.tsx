@@ -1,10 +1,8 @@
 import { Box, Stack, Image, Button } from "@chakra-ui/react";
-import { ref, remove } from "firebase/database";
 import { FiCopy } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
-import { database } from "../services/firebase";
+import { RoomUse } from "../providers/Room";
 
 interface IHeaderProps {
   id: string;
@@ -12,12 +10,11 @@ interface IHeaderProps {
 }
 
 function Header({ id, admin }: IHeaderProps) {
-  const navigate = useNavigate();
+  const { deleteRoom } = RoomUse();
 
   const handleEndRoom = () => {
     if (window.confirm("voce realmente deseja encerar esta sala")) {
-      remove(ref(database, `rooms/${id}`));
-      navigate("/");
+      deleteRoom(id)
     }
   };
 

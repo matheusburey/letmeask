@@ -1,10 +1,8 @@
 import { useToast } from "@chakra-ui/react";
-import { off, onValue, ref } from "firebase/database";
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../../service/api";
-import { database } from "../../services/firebase";
+import api from "../../services/api";
 
 interface IFirebaseQuestions {
   [key: string]: IQuestions & {
@@ -19,23 +17,26 @@ interface IFirebaseQuestions {
 interface IAuthContext {
   title: string;
   questions: IQuestions[] | undefined;
-  getRoom: (roomId: string, userId?: string) => void;
+  getRoom: (ws: WebSocket) => void;
   checkRoom: (roomId: string) => void;
-  newRoom: (title: string) => void;
+  createNewRoom: (title: string) => void;
+  deleteRoom: (rooms: string) => void;
+  sendQuestion: (ws: WebSocket, question: string) => void;
 }
 
 interface IQuestions {
   id?: string;
-  content: string;
-  author: {
+  description: string;
+  room_id: string;
+  /* author: {
     id: string;
     name: string;
     avatar: string;
-  };
+  }; */
   isHighlighted: string;
   isAnswered: string;
   likeCount?: number;
-  likeId?: string | undefined;
+  likeId?: string;
 }
 
 interface IChildrenProps {
@@ -49,75 +50,82 @@ export const RoomUse = () => useContext(RoomContext);
 export function RoomProvider({ children }: IChildrenProps) {
   const toast = useToast();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<IQuestions[]>();
+  const [questions, setQuestions] = useState<IQuestions[]>([]);
   const [title, setTitle] = useState("");
 
-  const serialize = (
-    questionsData: IFirebaseQuestions,
-    userId = ""
-  ): IQuestions[] => {
-    return Object.entries(questionsData as IFirebaseQuestions).map(
-      ([key, values]) => {
-        return {
-          id: key,
-          content: values.content,
-          author: values.author,
-          isHighlighted: values.isHighlighted,
-          isAnswered: values.isAnswered,
-          likeCount: Object.values(values.likes ?? {}).length,
-          likeId: Object.entries(values.likes ?? {}).find(
-            ([, like]) => like.authorId === userId
-          )?.[0],
-        };
-      }
-    );
+  const getRoom = async (ws: WebSocket) => {
+    if (!title) {
+      const titleStorage = localStorage.getItem("roomTitle") || "";
+      setTitle(titleStorage);
+    }
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setQuestions(data);
+    };
   };
 
-  const getRoom = (roomId: string, userId = "") => {
-    onValue(ref(database, `rooms/${roomId}`), (room) => {
-      const { questions, title } = room.val();
-      let questionsArray: IQuestions[] = [];
-
-      if (questions) {
-        questionsArray = serialize(questions as IFirebaseQuestions, userId);
-      }
-      setTitle(title);
-      setQuestions(questionsArray);
-      return () => off(ref(database));
-    });
+  const sendQuestion = async (ws: WebSocket, question: string) => {
+    ws.send(question);
   };
 
   const checkRoom = async (roomId: string) => {
-    const { data } = await api.get(`rooms${roomId}`);
-    if (!data) {
+    try {
+      const { data } = await api.get(`rooms/${roomId}`);
+      const roomTitle = data.data.title;
+      localStorage.setItem("roomTitle", roomTitle);
+      setTitle(roomTitle);
+      navigate(`rooms/${roomId}`);
+    } catch (e) {
       toast({
         title: "sala nao existe.",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
-      throw new Error();
     }
-    setTitle(data.detail.data.title);
   };
 
-  const newRoom = async (title: string) => {
-    const { data } = await api.post("rooms", { title });
-    if (!data) {
+  const createNewRoom = async (title: string) => {
+    try {
+      const { data } = await api.post("rooms", { title });
+      const roomId = data.data.id;
+      navigate(`/admin/rooms/${roomId}`);
+    } catch (e) {
+      console.log(e);
       toast({
-        title: "sala nao existe.",
+        title: "Erro ao criar sala",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
-      throw new Error();
     }
-    const roomId = data.detail.data._id;
-    navigate(`rooms/${roomId}`);
+  };
+
+  const deleteRoom = (roomId: string) => {
+    try {
+      api.delete(`rooms/${roomId}`);
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Erro ao criar sala",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
   };
 
   const value = useMemo(
-    () => ({ title, questions, getRoom, checkRoom, newRoom }),
+    () => ({
+      title,
+      questions,
+      getRoom,
+      checkRoom,
+      createNewRoom,
+      deleteRoom,
+      sendQuestion,
+    }),
     [title, questions]
   );
 

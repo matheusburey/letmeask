@@ -16,7 +16,7 @@ class RoomsCrud:
         room = list(cls.db.find({"id": id}))
         if room == []:
             return None
-        return cls.serialize(room)
+        return cls.serialize(room[0])
 
     def delete_room(self, id: str):
         room = self.db.find_one_and_delete({"id": id})
