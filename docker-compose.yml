@@ -28,10 +28,7 @@ services:
       - ./frontend:/home/frontend/
     ports:
       - '5173:5173'
-    depends_on:
-      - backend
     hostname: frontend
 
 volumes:
   mongo:
-  backend:
