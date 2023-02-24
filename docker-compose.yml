@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+
+  mongo:
+    image: mongo
+    hostname: mongo
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    volumes:
+      - ./backend:/home/backend
+    ports:
+      - '8000:8000'
+    depends_on:
+      - mongo
+    hostname: backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    volumes:
+      - ./frontend:/home/frontend/
+    ports:
+      - '5173:5173'
+    depends_on:
+      - backend
+    hostname: frontend
+
+volumes:
+  mongo:
+  backend:
