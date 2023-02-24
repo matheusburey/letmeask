@@ -23,7 +23,7 @@ export function NewRoom() {
     <Flex h="100vh">
       <Aside />
       <Stack as="main" flex="8" px="32px" align="center" justify="center">
-        <Stack maxW="320px">
+        <Stack maxW="320px" gap="3">
           <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
           <Text
             fontFamily="poppins"

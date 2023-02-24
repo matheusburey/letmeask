@@ -8,7 +8,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 
 import logoImg from "../assets/images/logo.svg";
@@ -38,18 +37,17 @@ export function Home() {
     <Flex h="100vh">
       <Aside />
       <Stack as="main" flex="8" px="32px" align="center" justify="center">
-        <Stack maxW="320px">
+        <Stack maxW="320px" gap="3">
           <Image mb="16" alignSelf="center" src={logoImg} alt="Letmeask" />
           <Button
             colorScheme="gray"
             borderColor="black"
             variant="outline"
             onClick={handleCreateRoom}
-            leftIcon={<FcGoogle />}
           >
-            Crie sua sala com o Google
+            Crie sua sala
           </Button>
-          <Flex py="7" color="gray.500" align="center" justify="space-between">
+          <Flex py="3" color="gray.500" align="center" justify="space-between">
             <Divider colorScheme="gray" w="24%" />
             <Text fontSize="sm">ou entre em uma sala</Text>
             <Divider colorScheme="gray" w="24%" />

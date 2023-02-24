@@ -5,9 +5,8 @@ import illustrationImg from "../assets/images/illustration.svg";
 function Aside() {
   return (
     <Stack
-      display={["none", "block", "block"]}
+      display={["none", "flex", "flex"]}
       as="aside"
-      flex="7"
       px="80px"
       justify="center"
       bg="purple.500"
