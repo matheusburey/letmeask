@@ -15,7 +15,7 @@ export function NewRoom() {
   const handleCreateRoom = async () => {
     setIsLoading(true);
     const newRoomName = nameRoom.trim();
-    await createNewRoom(newRoomName);
+    createNewRoom(newRoomName);
     setIsLoading(false);
   };
 

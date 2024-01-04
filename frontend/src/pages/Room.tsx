@@ -29,11 +29,7 @@ export function Room() {
   }
 
   useEffect(() => {
-    return () => {
-      const ws = new WebSocket(`${import.meta.env.VITE_API_WS}/${id}`);
-      setConn(ws);
-      return getRoom(ws);
-    };
+    getRoom(id.toString());
   }, [id]);
 
   const handleLike = async (questionId = "", likeId = "") => {
@@ -139,7 +135,7 @@ export function Room() {
                   </Button>
                 </Question>
               );
-            }
+            },
           )}
         </Stack>
       </Box>

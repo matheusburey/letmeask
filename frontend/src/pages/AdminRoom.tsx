@@ -1,5 +1,5 @@
 import { Badge, Box, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AiOutlineCheckCircle, AiOutlineDelete } from "react-icons/ai";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
@@ -11,19 +11,10 @@ import { RoomUse } from "../providers/Room";
 export function AdminRoom() {
   const { id } = useParams();
   const { title, questions, getRoom } = RoomUse();
-  const [conn, setConn] = useState<WebSocket>();
 
   if (!id) {
     throw new Error("id");
   }
-
-  useEffect(() => {
-    return () => {
-      const ws = new WebSocket(`${import.meta.env.VITE_API_WS}/${id}`);
-      setConn(ws);
-      return getRoom(ws);
-    };
-  }, [id]);
 
   const handleDeleteQuestion = (questionId = "") => {
     if (
@@ -49,6 +40,10 @@ export function AdminRoom() {
       });
     }
   };
+
+  useEffect(() => {
+    getRoom(id.toString());
+  }, [id]);
 
   return (
     <>
