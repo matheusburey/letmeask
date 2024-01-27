@@ -7,7 +7,7 @@ interface IProps {
 export default function Input({ value, onChange, placeholder }: IProps) {
   return (
     <input
-      className="border border-gray-300 py-2 px-4 rounded mb-2"
+      className="border border-gray-300 py-3 px-4 rounded mb-2"
       type="text"
       value={value}
       onChange={(event) => onChange(event.target.value)}

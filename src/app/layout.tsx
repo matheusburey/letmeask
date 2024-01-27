@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={`${roboto.variable} ${poppins.variable} font-roboto bg-white`}>{children}</body>
+      <body className={`${roboto.variable} ${poppins.variable} font-roboto bg-gray-50`}>{children}</body>
     </html >
   );
 }

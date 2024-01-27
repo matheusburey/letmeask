@@ -9,7 +9,7 @@ interface IProps {
 function Button({ disabled = false, children, onClick }: IProps) {
   return (
     <button
-      className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 w-full rounded disabled:bg-violet-200"
+      className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-3 w-full rounded disabled:bg-violet-200"
       disabled={disabled}
       onClick={onClick}
     >

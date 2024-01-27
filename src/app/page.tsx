@@ -2,19 +2,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from 'next/navigation'
 
 import logoImg from "@/assets/logo.svg";
 import { Aside, Button, Input } from "@/components";
 
 export default function Home() {
-  const checkRoom = (i: any) => console.log(i);
+  const router = useRouter();
   const [roomCode, setRoomCode] = useState("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const clickButtonJoinRoom = async () => {
     const roomId = roomCode.trim();
     try {
-      await fetch(`/api/room?room_id=${roomId}`);
+      const res = await fetch(`/api/room?roomId=${roomId}`);
+      if (!res.ok) {
+        throw new Error(`Erro na requisição: ${res.status}`);
+      }
+      const data = await res.json();
+      router.push(`/room/${data.roomId}`);
     } catch (e) {
       console.log(e);
     }
