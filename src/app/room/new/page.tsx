@@ -19,13 +19,13 @@ export default function NewRoom() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: newRoomName }),
+        body: JSON.stringify({ title: newRoomName }),
       });
       if (!res.ok) {
         throw new Error(`Erro na requisição: ${res.status}`);
       }
       const data = await res.json();
-      router.push(`/room/${data.roomId}/admin`);
+      router.push(`/room/${data.data._id}/admin`);
     } catch (e) {
       console.log(e);
     }

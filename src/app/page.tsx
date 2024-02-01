@@ -14,16 +14,17 @@ export default function Home() {
   const clickButtonJoinRoom = async () => {
     const roomId = roomCode.trim();
     try {
-      const res = await fetch(`/api/room?roomId=${roomId}`);
+      const res = await fetch(`/api/room/${roomId}`);
       if (!res.ok) {
         throw new Error(`Erro na requisição: ${res.status}`);
       }
       const data = await res.json();
-      router.push(`/room/${data.roomId}`);
+      router.push(`/room/${data.data._id}`);
     } catch (e) {
       console.log(e);
     }
   };
+  console.log(process.env.VITE_API_URL)
 
   return (
     <div className="flex min-h-screen">
