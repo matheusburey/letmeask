@@ -7,10 +7,9 @@ docker-compose*
 README.md
 LICENSE
 .vscode
-Makefile
-helm-charts
-.env
-.next
 .editorconfig
 .idea
 coverage*
+.github
+target/
+.dist
