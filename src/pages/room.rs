@@ -1,10 +1,13 @@
 use crate::components::{button::Button, header::Header};
-use leptos::*;
 
-use leptos_use::{core::ConnectionReadyState, use_websocket, UseWebsocketReturn};
+use leptos::*;
+use leptos_router::use_params_map;
+use leptos_use::{use_websocket, UseWebsocketReturn};
 
 #[component]
 pub fn Room() -> impl IntoView {
+    let params = move || use_params_map();
+    let code = move || params().with(|pr| pr.get("code").cloned().unwrap_or_default());
     let (room_data, set_room_data) = create_signal(vec![]);
     let room_name = "React".to_string();
     let (new_question, set_new_question) = create_signal("".to_string());
@@ -13,20 +16,14 @@ pub fn Room() -> impl IntoView {
         let _ = &room_data.update(|room_data: &mut Vec<_>| room_data.push(message));
     }
 
-    let UseWebsocketReturn {
-        ready_state,
-        message,
-        message_bytes,
-        send,
-        ..
-    } = use_websocket("ws://localhost:3000/ws");
+    let UseWebsocketReturn { message, send, .. } =
+        use_websocket(format!("ws://localhost:3000/ws/{}", &code()).as_str());
 
     let send_message = move |_| {
         let m = new_question.get();
         send(&m);
     };
 
-    let _connected = move || ready_state.get() == ConnectionReadyState::Open;
     let has_questions = move || room_data.get().len() != 0;
 
     create_effect(move |_| {
@@ -35,14 +32,8 @@ pub fn Room() -> impl IntoView {
         };
     });
 
-    create_effect(move |_| {
-        if let Some(m) = message_bytes.get() {
-            update_question(&set_room_data, format! {"[message_bytes]: {:?}", m});
-        };
-    });
-
     view! {
-        <Header id="22123124124".to_string() admin=false />
+        <Header code=code() admin=false />
         <main class="max-w-4xl w-full flex flex-col px-8 mx-auto">
             <div class="flex justify-between items-center my-8">
                 <h1 class="text-2xl font-bold font-poppins">

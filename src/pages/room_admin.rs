@@ -1,7 +1,7 @@
-use crate::components::{button::Button, header::Header};
+use crate::components::header::Header;
 use leptos::*;
 
-use leptos_use::{core::ConnectionReadyState, use_websocket, UseWebsocketReturn};
+use leptos_use::{use_websocket, UseWebsocketReturn};
 
 #[component]
 pub fn RoomAdmin() -> impl IntoView {
@@ -13,10 +13,8 @@ pub fn RoomAdmin() -> impl IntoView {
     }
 
     let UseWebsocketReturn {
-        ready_state,
         message,
         message_bytes,
-        send,
         ..
     } = use_websocket("ws://localhost:3000/ws");
 
@@ -25,7 +23,6 @@ pub fn RoomAdmin() -> impl IntoView {
     //     send(&m);
     // };
 
-    let _connected = move || ready_state.get() == ConnectionReadyState::Open;
     let has_questions = move || room_data.get().len() != 0;
 
     create_effect(move |_| {
@@ -41,7 +38,7 @@ pub fn RoomAdmin() -> impl IntoView {
     });
 
     view! {
-        <Header id="22123124124".to_string() admin=true />
+        <Header code="22123124124".to_string() admin=true />
         <main class="max-w-4xl w-full flex flex-col px-8 mx-auto">
             <div class="flex justify-between items-center my-8">
                 <h1 class="text-2xl font-bold font-poppins">
