@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: { files: ["./src/**/*.rs"] },
+  content: [
+    "./src/**/*.vue",
+    './node_modules/preline/preline.js',
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -9,5 +12,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('preline/plugin'), ["./plugins/preline.client.ts"],],
 }
+

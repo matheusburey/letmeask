@@ -11,5 +11,5 @@ LICENSE
 .idea
 coverage*
 .github
-target/
+.nuxt/
 .dist
