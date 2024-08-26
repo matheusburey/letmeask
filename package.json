@@ -12,6 +12,8 @@
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
     "nuxt": "^3.13.0",
+    "nuxt-mongoose": "^1.0.6",
+    "nuxt-socket-io": "^3.0.13",
     "preline": "^2.4.1",
     "vue": "3.4.38"
   }
