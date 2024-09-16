@@ -2,7 +2,12 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "nuxt-mongoose", "nuxt-socket-io"],
+  nitro: {
+    experimental: {
+      websocket: true,
+    },
+  },
+  modules: ["@nuxtjs/tailwindcss", "nuxt-mongoose", "nuxt-lucide-icons"],
   srcDir: "src/",
   app: {
     head: {
@@ -12,17 +17,9 @@ export default defineNuxtConfig({
     },
   },
   mongoose: {
-    uri: "mongodb://mongo",
+    uri: process.env.MONGODB_URI,
     options: {},
     modelsDir: "models",
-    devtools: true,
-  },
-  io: {
-    sockets: [
-      {
-        name: "main",
-        url: "http://localhost:3000",
-      },
-    ],
+    devtools: false,
   },
 });

@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 defineProps({
     code: String,
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
 });
 </script>
 <template>
@@ -23,6 +27,7 @@ defineProps({
                 </button>
                 <button
                     class="border border-red-500 hover:bg-red-100 text-red-500 py-2 px-4 rounded"
+                    v-if="isAdmin"
                 >
                     Encerar sala
                 </button>
